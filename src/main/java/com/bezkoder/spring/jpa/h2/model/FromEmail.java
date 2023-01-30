@@ -36,7 +36,7 @@ public class FromEmail {
 
 	@Override
 	public String toString() {
-		return "Tutorial [id=" + id + ", title=" + email + "]";
+		return "FromEmail [id=" + id + ", email=" + email + "]";
 	}
 
 }

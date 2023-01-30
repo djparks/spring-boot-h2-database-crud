@@ -29,10 +29,10 @@ public class FromEmailController {
 	@Autowired
 	FromEmailRepository fromEmailRepository;
 
-	@GetMapping("/tutorials")
-	public ResponseEntity<List<FromEmail>> getAllTutorials(@RequestParam(required = false) String title) {
+	@GetMapping("/fromEmails")
+	public ResponseEntity<List<FromEmail>> getAllFromEmails(@RequestParam(required = false) String title) {
 		try {
-			List<FromEmail> fromEmails = new ArrayList<FromEmail>();
+			List<FromEmail> fromEmails = new ArrayList<>();
 
 			if (title == null)
 				fromEmailRepository.findAll().forEach(fromEmails::add);
@@ -49,19 +49,19 @@ public class FromEmailController {
 		}
 	}
 
-	@GetMapping("/tutorials/{id}")
-	public ResponseEntity<FromEmail> getTutorialById(@PathVariable("id") long id) {
-		Optional<FromEmail> tutorialData = fromEmailRepository.findById(id);
+	@GetMapping("/fromEmails/{id}")
+	public ResponseEntity<FromEmail> getFromEmailById(@PathVariable("id") long id) {
+		Optional<FromEmail> fromEmailData = fromEmailRepository.findById(id);
 
-		if (tutorialData.isPresent()) {
-			return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
+		if (fromEmailData.isPresent()) {
+			return new ResponseEntity<>(fromEmailData.get(), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	@PostMapping("/tutorials")
-	public ResponseEntity<FromEmail> createTutorial(@RequestBody FromEmail fromEmail) {
+	@PostMapping("/fromEmails")
+	public ResponseEntity<FromEmail> createFromEmail(@RequestBody FromEmail fromEmail) {
 		try {
 			FromEmail _fromEmail = fromEmailRepository
 					.save(new FromEmail(fromEmail.getEmail()));
@@ -71,12 +71,12 @@ public class FromEmailController {
 		}
 	}
 
-	@PutMapping("/tutorials/{id}")
-	public ResponseEntity<FromEmail> updateTutorial(@PathVariable("id") long id, @RequestBody FromEmail fromEmail) {
-		Optional<FromEmail> tutorialData = fromEmailRepository.findById(id);
+	@PutMapping("/fromEmails/{id}")
+	public ResponseEntity<FromEmail> updateFromEmail(@PathVariable("id") long id, @RequestBody FromEmail fromEmail) {
+		Optional<FromEmail> fromEmailData = fromEmailRepository.findById(id);
 
-		if (tutorialData.isPresent()) {
-			FromEmail _fromEmail = tutorialData.get();
+		if (fromEmailData.isPresent()) {
+			FromEmail _fromEmail = fromEmailData.get();
 			_fromEmail.setEmail(fromEmail.getEmail());
 			return new ResponseEntity<>(fromEmailRepository.save(_fromEmail), HttpStatus.OK);
 		} else {
@@ -84,25 +84,14 @@ public class FromEmailController {
 		}
 	}
 
-	@DeleteMapping("/tutorials/{id}")
-	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
+	@DeleteMapping("/fromEmails/{id}")
+	public ResponseEntity<HttpStatus> deleteFromEmail(@PathVariable("id") long id) {
 		try {
 			fromEmailRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
-
-	@DeleteMapping("/tutorials")
-	public ResponseEntity<HttpStatus> deleteAllTutorials() {
-		try {
-			fromEmailRepository.deleteAll();
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
 	}
 
 
