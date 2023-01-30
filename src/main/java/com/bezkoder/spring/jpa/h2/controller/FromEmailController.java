@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.bezkoder.spring.jpa.h2.model.FromEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,40 +19,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bezkoder.spring.jpa.h2.model.Tutorial;
-import com.bezkoder.spring.jpa.h2.repository.TutorialRepository;
+import com.bezkoder.spring.jpa.h2.repository.FromEmailRepository;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
-public class TutorialController {
+public class FromEmailController {
 
 	@Autowired
-	TutorialRepository tutorialRepository;
+	FromEmailRepository fromEmailRepository;
 
 	@GetMapping("/tutorials")
-	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
+	public ResponseEntity<List<FromEmail>> getAllTutorials(@RequestParam(required = false) String title) {
 		try {
-			List<Tutorial> tutorials = new ArrayList<Tutorial>();
+			List<FromEmail> fromEmails = new ArrayList<FromEmail>();
 
 			if (title == null)
-				tutorialRepository.findAll().forEach(tutorials::add);
+				fromEmailRepository.findAll().forEach(fromEmails::add);
 			else
-				tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
+				fromEmailRepository.findByTitleContaining(title).forEach(fromEmails::add);
 
-			if (tutorials.isEmpty()) {
+			if (fromEmails.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
-			return new ResponseEntity<>(tutorials, HttpStatus.OK);
+			return new ResponseEntity<>(fromEmails, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@GetMapping("/tutorials/{id}")
-	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") long id) {
-		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+	public ResponseEntity<FromEmail> getTutorialById(@PathVariable("id") long id) {
+		Optional<FromEmail> tutorialData = fromEmailRepository.findById(id);
 
 		if (tutorialData.isPresent()) {
 			return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
@@ -61,26 +61,26 @@ public class TutorialController {
 	}
 
 	@PostMapping("/tutorials")
-	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
+	public ResponseEntity<FromEmail> createTutorial(@RequestBody FromEmail fromEmail) {
 		try {
-			Tutorial _tutorial = tutorialRepository
-					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
-			return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
+			FromEmail _fromEmail = fromEmailRepository
+					.save(new FromEmail(fromEmail.getTitle(), fromEmail.getDescription(), false));
+			return new ResponseEntity<>(_fromEmail, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PutMapping("/tutorials/{id}")
-	public ResponseEntity<Tutorial> updateTutorial(@PathVariable("id") long id, @RequestBody Tutorial tutorial) {
-		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+	public ResponseEntity<FromEmail> updateTutorial(@PathVariable("id") long id, @RequestBody FromEmail fromEmail) {
+		Optional<FromEmail> tutorialData = fromEmailRepository.findById(id);
 
 		if (tutorialData.isPresent()) {
-			Tutorial _tutorial = tutorialData.get();
-			_tutorial.setTitle(tutorial.getTitle());
-			_tutorial.setDescription(tutorial.getDescription());
-			_tutorial.setPublished(tutorial.isPublished());
-			return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+			FromEmail _fromEmail = tutorialData.get();
+			_fromEmail.setTitle(fromEmail.getTitle());
+			_fromEmail.setDescription(fromEmail.getDescription());
+			_fromEmail.setPublished(fromEmail.isPublished());
+			return new ResponseEntity<>(fromEmailRepository.save(_fromEmail), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -89,7 +89,7 @@ public class TutorialController {
 	@DeleteMapping("/tutorials/{id}")
 	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
 		try {
-			tutorialRepository.deleteById(id);
+			fromEmailRepository.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,7 +99,7 @@ public class TutorialController {
 	@DeleteMapping("/tutorials")
 	public ResponseEntity<HttpStatus> deleteAllTutorials() {
 		try {
-			tutorialRepository.deleteAll();
+			fromEmailRepository.deleteAll();
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,14 +108,14 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/published")
-	public ResponseEntity<List<Tutorial>> findByPublished() {
+	public ResponseEntity<List<FromEmail>> findByPublished() {
 		try {
-			List<Tutorial> tutorials = tutorialRepository.findByPublished(true);
+			List<FromEmail> fromEmails = fromEmailRepository.findByPublished(true);
 
-			if (tutorials.isEmpty()) {
+			if (fromEmails.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<>(tutorials, HttpStatus.OK);
+			return new ResponseEntity<>(fromEmails, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
