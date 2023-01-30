@@ -6,7 +6,7 @@ import com.bezkoder.spring.jpa.h2.model.FromEmail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FromEmailRepository extends JpaRepository<FromEmail, Long> {
-  List<FromEmail> findByPublished(boolean published);
+  //List<FromEmail> findByPublished(boolean published);
 
-  List<FromEmail> findByTitleContaining(String title);
+  List<FromEmail> findByEmail(String email);
 }

@@ -37,7 +37,7 @@ public class FromEmailController {
 			if (title == null)
 				fromEmailRepository.findAll().forEach(fromEmails::add);
 			else
-				fromEmailRepository.findByTitleContaining(title).forEach(fromEmails::add);
+				fromEmailRepository.findByEmail(title).forEach(fromEmails::add);
 
 			if (fromEmails.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -64,7 +64,7 @@ public class FromEmailController {
 	public ResponseEntity<FromEmail> createTutorial(@RequestBody FromEmail fromEmail) {
 		try {
 			FromEmail _fromEmail = fromEmailRepository
-					.save(new FromEmail(fromEmail.getTitle(), fromEmail.getDescription(), false));
+					.save(new FromEmail(fromEmail.getEmail()));
 			return new ResponseEntity<>(_fromEmail, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,9 +77,7 @@ public class FromEmailController {
 
 		if (tutorialData.isPresent()) {
 			FromEmail _fromEmail = tutorialData.get();
-			_fromEmail.setTitle(fromEmail.getTitle());
-			_fromEmail.setDescription(fromEmail.getDescription());
-			_fromEmail.setPublished(fromEmail.isPublished());
+			_fromEmail.setEmail(fromEmail.getEmail());
 			return new ResponseEntity<>(fromEmailRepository.save(_fromEmail), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -107,18 +105,5 @@ public class FromEmailController {
 
 	}
 
-	@GetMapping("/tutorials/published")
-	public ResponseEntity<List<FromEmail>> findByPublished() {
-		try {
-			List<FromEmail> fromEmails = fromEmailRepository.findByPublished(true);
-
-			if (fromEmails.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-			return new ResponseEntity<>(fromEmails, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 
 }
